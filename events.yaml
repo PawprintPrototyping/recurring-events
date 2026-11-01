@@ -1,0 +1,44 @@
+---
+version: 1
+events:
+  - id: Member Meeting
+    dtstart: "2026-10-01T19:00:00"
+    timezone: "America/Los_Angeles"
+    duration_minutes: 90
+    rrule:
+      freq: MONTHLY
+      interval: 1
+      byweekday: [TU]
+      bysetpos: 3
+    upcoming_count: 3
+    organizer_actor_id: "17"
+    attributed_to:
+      id: "6"
+      preferred_username: "space"
+    template:
+      title: "Pawprint General Body Meeting - {{occurrence_date}}"
+      description: |
+        <p>General Body Member Meeting for {{occurrence_date}}</p>
+        <p>A great time to stop by the space and meet the fine folk that make Pawprint Purr.</p>
+      visibility: "PUBLIC"
+      join_options: "FREE"
+      status: "CONFIRMED"
+      draft: false
+      category: "MEETING"
+      tags: ["makerspace", "hackerspace", "member_meeting"]
+      phone_address: null
+      external_participation_url: null
+      picture_media_uuid: null
+      language: "en"
+      physical_address:
+        description: "Pawprint Prototyping"
+        street: "545 Aldo Ave, #24"
+        postal_code: "95054"
+        locality: "Santa Clara"
+        region: "CA"
+        country: "USA"
+        timezone: "America/Los_Angeles"
+      options:
+        show_start_time: true
+        show_end_time: true
+        comment_moderation: "CLOSED"

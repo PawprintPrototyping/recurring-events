@@ -1,0 +1,45 @@
+exclude: venv/
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: check-ast
+      - id: end-of-file-fixer
+      - id: detect-private-key
+      - id: pretty-format-json
+        # default check-json setup makes renovate config unnecessarily long and visually harder to parse
+        exclude: renovate.json
+        args:
+          - --autofix
+      - id: trailing-whitespace
+
+  - repo: https://github.com/asottile/seed-isort-config
+    rev: v2.2.0
+    hooks:
+      - id: seed-isort-config
+
+  - repo: https://github.com/pycqa/isort
+    rev: 9.0.0a3
+    hooks:
+      - id: isort
+        name: isort (python)
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.3.0
+    hooks:
+      - id: flake8
+        name: flake8 (python)
+
+  - repo: https://github.com/ambv/black
+    rev: 26.3.1
+    hooks:
+      - id: black
+
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.29.0
+    hooks:
+      - id: yamllint

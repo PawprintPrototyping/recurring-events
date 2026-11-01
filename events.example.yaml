@@ -1,0 +1,43 @@
+---
+version: 1
+events:
+  - id: third-tuesday-example
+    dtstart: "2030-01-15T18:30:00"
+    timezone: "America/Los_Angeles"
+    duration_minutes: 90
+    rrule:
+      freq: MONTHLY
+      interval: 1
+      byweekday: [TU]
+      bysetpos: 3
+    upcoming_count: 3
+    # Add original starts here before manually moving those events in Mobilizon:
+    # skip_starts:
+    #   - "2030-12-17T18:30:00"
+    organizer_actor_id: "100001"
+    attributed_to:
+      id: "200001"
+      preferred_username: "space"
+    template:
+      title: "Pawprint Member Meeting - {{occurrence_date}}"
+      description: "A fictional example event for {{occurrence_date}}."
+      visibility: "PUBLIC"
+      join_options: "FREE"
+      status: "CONFIRMED"
+      draft: false
+      category: "MEETING"
+      tags: ["example", "community"]
+      online_address: "https://example.com/meeting"
+      phone_address: null
+      external_participation_url: null
+      picture_media_uuid: null
+      language: "en"
+      physical_address:
+        description: "Example venue"
+        locality: "Example City"
+        country: "Example Country"
+        timezone: "America/Los_Angeles"
+      options:
+        show_start_time: true
+        show_end_time: true
+        comment_moderation: "CLOSED"

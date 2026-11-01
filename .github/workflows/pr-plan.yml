@@ -1,0 +1,100 @@
+name: 🧭 Plan dry-run
+
+on:
+  pull_request:
+    branches: ["**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobilizon-recurring-events
+  cancel-in-progress: false
+
+jobs:
+
+  create-events:
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+        with:
+          version: "0.11.8"
+      - run: uv sync --locked --python 3.14
+      - name: Script dry-run
+        id: plan
+        run: |
+          plan_output=$(uv run --locked --python 3.14 python recurring_events.py --config events.yaml --dry-run)
+          echo "$plan_output"
+          {
+            echo 'stdout<<EOF'
+            echo "$plan_output"
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+        continue-on-error: true
+        env:
+          MOBILIZON_GRAPHQL_URL: ${{ vars.MOBILIZON_GRAPHQL_URL }}
+          MOBILIZON_MACHINE_USER_EMAIL: ${{ secrets.MOBILIZON_MACHINE_USER_EMAIL }}
+          MOBILIZON_MACHINE_USER_PASSWORD: ${{ secrets.MOBILIZON_MACHINE_USER_PASSWORD }}
+      
+      - name: Publish plan comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
+        env:
+          PLAN_OUTCOME: ${{ steps.plan.outcome }}
+          PLAN: "${{ steps.plan.outputs.plan }}"
+          ACTOR: ${{ github.actor }}
+          EVENT_NAME: ${{ github.event_name }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const marker = '<!-- plan -->';
+            const output = `${marker}
+            #### Terraform Plan 📖\`${process.env.PLAN_OUTCOME}\`
+
+            <details><summary>Show Plan</summary>
+
+            \`\`\`bash
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>
+
+            *Pusher: @${process.env.ACTOR}, Action: \`${process.env.EVENT_NAME}\`, Workflow: \`${process.env.WORKFLOW_NAME}\`*`;
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100
+            });
+            const existingComment = comments
+              .filter((comment) => comment.user?.login === 'github-actions[bot]')
+              .filter((comment) =>
+                comment.body?.includes(marker) ||
+                (comment.body?.includes('#### Terraform Format and Style') &&
+                  comment.body?.includes('<summary>Show Plan</summary>'))
+              )
+              .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                comment_id: existingComment.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: output
+              });
+            } else {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: output
+              });
+            }
+
