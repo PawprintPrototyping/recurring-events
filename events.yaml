@@ -9,7 +9,7 @@ events:
       freq: MONTHLY
       interval: 1
       byweekday: [TU]
-      bysetpos: 3
+      bysetpos: 4
     upcoming_count: 3
     organizer_actor_id: "17"
     attributed_to:
