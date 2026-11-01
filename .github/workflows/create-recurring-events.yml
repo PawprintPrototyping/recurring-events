@@ -1,8 +1,8 @@
 name: 🔁 Create recurring Mobilizon events
 
 on:
-  #schedule:
-  #  - cron: "12 */6 * * *"
+  schedule:
+    - cron: "12 */6 * * *"
   workflow_dispatch:
   push:
     branches: [main]
