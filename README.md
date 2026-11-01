@@ -57,7 +57,7 @@ The above example is the third Tuesday of each month. `byweekday: [TU]` produces
 
 **Note:** Do not put both `count` and `until` in the same rule. A rule with `count` or `until` is finite. For a finite rule without `upcoming_count`, the script selects remaining future occurrences and creates any that are missing. When `upcoming_count` is present on a finite rule, it retains that rolling number of earliest future occurrences.
 
-## Publishing Policy 
+## Publishing Policy
 
 A run captures the current time and excludes occurrences starting at or before it. `skip_starts` entries are also excluded before `upcoming_count` is applied, so skipped occurrences do not reduce the future-event list.
 

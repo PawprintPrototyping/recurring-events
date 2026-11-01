@@ -14,4 +14,4 @@ dependencies = [
 package = false
 
 [tool.isort]
-known_third_party = []
+known_third_party = ["dateutil", "requests", "yaml"]

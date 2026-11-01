@@ -40,7 +40,7 @@ jobs:
           MOBILIZON_GRAPHQL_URL: ${{ vars.MOBILIZON_GRAPHQL_URL }}
           MOBILIZON_MACHINE_USER_EMAIL: ${{ secrets.MOBILIZON_MACHINE_USER_EMAIL }}
           MOBILIZON_MACHINE_USER_PASSWORD: ${{ secrets.MOBILIZON_MACHINE_USER_PASSWORD }}
-      
+
       - name: Publish plan comment
         if: github.event_name == 'pull_request'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
@@ -97,4 +97,3 @@ jobs:
                 body: output
               });
             }
-

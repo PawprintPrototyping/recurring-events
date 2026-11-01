@@ -3,20 +3,19 @@
 Mobilizon recurring events script.
 """
 
-from urllib.parse import SplitResult
-import typing
 import argparse
 import os
 import re
 import sys
 import traceback
+import typing
 import uuid
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone, tzinfo
 from pathlib import Path
 from typing import Protocol, TypeAlias, TypedDict, cast
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import SplitResult, urlsplit, urlunsplit
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import requests  # type: ignore[import-untyped]
@@ -546,13 +545,15 @@ class MobilizonClient:
                 {**base_variables, "page": page, "limit": PAGE_SIZE},
             )
             owner: object | None = data.get(owner_key)
+            owner_id = owner.get("id")
             if not isinstance(owner, Mapping):
                 raise ApiError(
                     f"Mobilizon did not return the requested {owner_key} owner."
                 )
-            if str(owner.get("id")) != expected_owner_id:
+            if str(owner_id) != expected_owner_id:
                 raise ApiError(
-                    f"Mobilizon returned a {owner_key} owner ({owner.get("id")}) that does not match the configured ID ({expected_owner_id})."
+                    f"Mobilizon returned a {owner_key} owner ({owner_id}) that does not match "
+                    f"the configured ID ({expected_owner_id})."
                 )
 
             listing = owner.get("organizedEvents")
@@ -1100,7 +1101,9 @@ def load_config(config_path: Path) -> list[EventDefinition]:
         if event_id in seen_ids:
             raise ConfigurationError(f"events contains duplicate id: {event_id}.")
         seen_ids.add(event_id)
-        timezone_name: str = require_nonempty_string(event["timezone"], f"{path}.timezone")
+        timezone_name: str = require_nonempty_string(
+            event["timezone"], f"{path}.timezone"
+        )
         dtstart: datetime = parse_local_dtstart(
             event["dtstart"], timezone_name, f"{path}.dtstart"
         )
@@ -1335,7 +1338,9 @@ def read_authentication_configuration(
             require_environment_credential(values, "MOBILIZON_TOKEN")
         )
 
-    missing: list[str] = [name for name in MACHINE_USER_AUTH_VARIABLES if name not in values]
+    missing: list[str] = [
+        name for name in MACHINE_USER_AUTH_VARIABLES if name not in values
+    ]
     if missing:
         raise ConfigurationError(
             f"{', '.join(missing)} must be set for machine-user authentication."
