@@ -50,7 +50,7 @@ events:
       freq: WEEKLY
       interval: 1
       byweekday: [WE]
-    upcoming_count: 3
+    upcoming_count: 10
     organizer_actor_id: "17"
     attributed_to:
       id: "6"
